@@ -29,7 +29,8 @@ board may also need ST's ST-LINK USB driver (STSW-LINK009).
 git clone https://github.com/ruptorhq/benchmark
 cd benchmark
 pip install -r requirements.txt
-python replay/preflight.py         # toolchain, modules, probe, builds
+python -m pyocd pack install stm32f446   # one time: STM32F446 support for pyocd
+python replay/preflight.py         # toolchain, modules, target, builds, probe
 python replay/run_hw_isotp.py      # CVE-2026-37535
 python replay/run_hw_j1939.py      # CVE-2026-37534
 python replay/run_hw_mqtt.py       # CVE-2026-54412

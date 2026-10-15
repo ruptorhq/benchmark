@@ -9,6 +9,7 @@ import time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from build import build
+from devicepack import TARGET, session_options
 from elf_guards import elf_redzones
 
 RES = 0x20001000
@@ -19,8 +20,8 @@ def main():
     guard_lo, guard_hi, gname = elf_redzones(elf, 32)[0]
     from pyocd.core.helpers import ConnectHelper
     from pyocd.flash.file_programmer import FileProgrammer
-    with ConnectHelper.session_with_chosen_probe(target_override="stm32f446retx",
-                                                 connect_mode="under-reset") as s:
+    with ConnectHelper.session_with_chosen_probe(target_override=TARGET, connect_mode="under-reset",
+                                                 **session_options()) as s:
         t = s.target
         t.reset_and_halt()
         FileProgrammer(s).program(elf, file_format="elf")

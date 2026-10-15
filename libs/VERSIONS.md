@@ -19,3 +19,12 @@ change to the vulnerable function).
 The vulnerable function in every CVE entry is upstream code; the deviation above does not
 introduce the bug. In each `harness/app_*_hw.c` the header comment points at the exact
 line of upstream code the trigger reaches.
+
+## Device pack
+
+pyocd supports the STM32F446 only through a CMSIS device pack, which is not vendored here.
+`replay/devicepack.py` downloads **Keil.STM32F4xx_DFP 3.1.1** from Keil
+(`https://www.keil.com/pack/Keil.STM32F4xx_DFP.3.1.1.pack`, 2,085,496 bytes) into `packs/` and
+refuses it unless its SHA-256 is
+`345231106fe697df24bbe9133aeeec1b0383d7891c4adf4f47bbb8b478e9f2f0`. The replay scripts load that
+exact file, so they do not depend on pyocd's online pack index.

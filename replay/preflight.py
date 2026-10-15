@@ -4,7 +4,8 @@ Verifies that your machine has what the three replay scripts need:
   * arm-none-eabi-gcc (ARM_GCC if set, else PATH, else its default Windows install folders,
     including the copy bundled with STM32CubeIDE / STM32CubeCLT)
   * python modules: pyocd, elftools
-  * pyocd support for the STM32F446 (installed once with: pyocd pack install stm32f446)
+  * pyocd support for the STM32F446 (the pinned device pack, fetched once with:
+    python replay/devicepack.py)
   * a connected NUCLEO-F446RE probe (ST-LINK)
   * each of the three harness ELFs can be built from the public tree
 
@@ -18,6 +19,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import build
+import devicepack
 
 
 def ok(msg):
@@ -56,18 +58,23 @@ def check_python_mods():
             fail(f"python module '{mod}' not importable. Run: pip install {pip_name}")
 
 
-TARGET = "stm32f446retx"
-
-
 def check_target():
-    out = subprocess.run([sys.executable, "-m", "pyocd", "list", "--targets"], capture_output=True, text=True)
+    args = [sys.executable, "-m", "pyocd", "list", "--targets"]
+    source = "pyocd-managed pack"
+    if os.path.isfile(devicepack.PACK_PATH):
+        if not devicepack.pack_ok():
+            fail(f"{devicepack.PACK_REL} does not match its pinned SHA-256. "
+                 "Delete it and run: python replay/devicepack.py")
+        args += ["--pack", devicepack.PACK_PATH]
+        source = f"pinned {devicepack.PACK_REL}"
+    out = subprocess.run(args, capture_output=True, text=True)
     if out.returncode != 0:
         tail = (out.stderr or "").strip().splitlines() or ["(no output)"]
         fail(f"'pyocd list --targets' failed: {tail[-1]}")
-    if TARGET not in (out.stdout or "").lower():
-        fail(f"pyocd has no support for {TARGET} yet (it comes from a device pack). "
-             "Run once: python -m pyocd pack install stm32f446")
-    ok(f"pyocd target: {TARGET}")
+    if devicepack.TARGET not in (out.stdout or "").lower():
+        fail(f"pyocd has no support for {devicepack.TARGET} yet. Run once: python replay/devicepack.py "
+             "(downloads the pinned Keil STM32F4 device pack, 2 MB, checked by SHA-256)")
+    ok(f"pyocd target: {devicepack.TARGET} ({source})")
 
 
 def check_probe():

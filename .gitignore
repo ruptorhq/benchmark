@@ -4,3 +4,6 @@ harness/*.o
 harness/*.map
 __pycache__/
 *.pyc
+
+# device pack fetched by replay/devicepack.py
+packs/

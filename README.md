@@ -19,6 +19,11 @@ All three: **no findings.**
 
 Hardware: NUCLEO-F446RE, USB cable.
 Software: Python 3.11+, `arm-none-eabi-gcc` (Arm GNU Toolchain 13 or 14), `pyocd`.
+Get the toolchain from developer.arm.com (Arm GNU Toolchain Downloads -> arm-none-eabi).
+If it is not on PATH, the scripts also look in the default Windows install folders,
+including the copy bundled with STM32CubeIDE / STM32CubeCLT under `C:\ST`. For any other
+location, set `ARM_GCC` to the folder that contains `arm-none-eabi-gcc`. On Windows the
+board may also need ST's ST-LINK USB driver (STSW-LINK009).
 
 ```
 git clone https://github.com/ruptorhq/benchmark

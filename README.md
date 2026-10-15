@@ -29,8 +29,7 @@ board may also need ST's ST-LINK USB driver (STSW-LINK009).
 git clone https://github.com/ruptorhq/benchmark
 cd benchmark
 pip install -r requirements.txt
-python replay/devicepack.py        # one time: pinned STM32F4 device pack (2 MB, SHA-256 checked)
-python replay/preflight.py         # toolchain, modules, target, builds, probe
+python replay/preflight.py         # toolchain, modules, device pack, builds, probe
 python replay/run_hw_isotp.py      # CVE-2026-37535
 python replay/run_hw_j1939.py      # CVE-2026-37534
 python replay/run_hw_mqtt.py       # CVE-2026-54412

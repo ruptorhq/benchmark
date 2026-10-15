@@ -4,8 +4,7 @@ Verifies that your machine has what the three replay scripts need:
   * arm-none-eabi-gcc (ARM_GCC if set, else PATH, else its default Windows install folders,
     including the copy bundled with STM32CubeIDE / STM32CubeCLT)
   * python modules: pyocd, elftools
-  * pyocd support for the STM32F446 (the pinned device pack, fetched once with:
-    python replay/devicepack.py)
+  * pyocd support for the STM32F446 (the pinned device pack, fetched automatically on first run)
   * a connected NUCLEO-F446RE probe (ST-LINK)
   * each of the three harness ELFs can be built from the public tree
 
@@ -59,22 +58,16 @@ def check_python_mods():
 
 
 def check_target():
-    args = [sys.executable, "-m", "pyocd", "list", "--targets"]
-    source = "pyocd-managed pack"
-    if os.path.isfile(devicepack.PACK_PATH):
-        if not devicepack.pack_ok():
-            fail(f"{devicepack.PACK_REL} does not match its pinned SHA-256. "
-                 "Delete it and run: python replay/devicepack.py")
-        args += ["--pack", devicepack.PACK_PATH]
-        source = f"pinned {devicepack.PACK_REL}"
-    out = subprocess.run(args, capture_output=True, text=True)
+    pack = devicepack.ensure()
+    out = subprocess.run([sys.executable, "-m", "pyocd", "list", "--targets", "--pack", pack],
+                         capture_output=True, text=True)
     if out.returncode != 0:
         tail = (out.stderr or "").strip().splitlines() or ["(no output)"]
         fail(f"'pyocd list --targets' failed: {tail[-1]}")
     if devicepack.TARGET not in (out.stdout or "").lower():
-        fail(f"pyocd has no support for {devicepack.TARGET} yet. Run once: python replay/devicepack.py "
-             "(downloads the pinned Keil STM32F4 device pack, 2 MB, checked by SHA-256)")
-    ok(f"pyocd target: {devicepack.TARGET} ({source})")
+        fail(f"pyocd still has no support for {devicepack.TARGET} even with {devicepack.PACK_REL} loaded. "
+             "This should not happen; verify the pack file.")
+    ok(f"pyocd target: {devicepack.TARGET} (pinned {devicepack.PACK_REL})")
 
 
 def check_probe():

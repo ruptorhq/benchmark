@@ -1,0 +1,23 @@
+{
+  "_comment": "Ground truth for the MPU redzone oracle on STM32F446: an MPU no-access region (AP=000, 32B, PRIVDEFENA) placed over a guard immediately after a buffer turns a 1-byte overflow into a PRECISE MemManage fault. This is what makes a sanitizer-class redzone oracle hardware-replayable (T2) under an MPU harness.",
+  "board": "NUCLEO-F446RE",
+  "overflow_into_mpu_guard": {
+    "faults": true,
+    "exception": "MemManage",
+    "cfsr": "0x00000082",
+    "daccviol": true,
+    "mmarvalid": true,
+    "mmfar_equals_guard_base": true,
+    "in_bounds_writes_fault": false
+  },
+  "stack_overflow_into_mpu_guard": {
+    "faults": true,
+    "exception": "MemManage",
+    "cfsr": "0x00000092",
+    "daccviol": true,
+    "mstkerr": true,
+    "mmarvalid": true,
+    "mmfar_in_guard": true,
+    "note": "MPU no-access 512B region below the stack; a recursion-driven overflow faults precisely in it. The Cortex-M4 has no MSPLIM, so this MPU region is how a stack overflow earns a hardware-replayable (T2) result."
+  }
+}

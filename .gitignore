@@ -1,0 +1,6 @@
+# built artifacts
+harness/*.elf
+harness/*.o
+harness/*.map
+__pycache__/
+*.pyc

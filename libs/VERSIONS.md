@@ -13,7 +13,7 @@ change to the vulnerable function).
 | DanielMartensson/Open-SAE-J1939 | https://github.com/DanielMartensson/Open-SAE-J1939 | commit `b6caf884` (affected, per CVE record; no upstream fix) | CVE-2026-37534 (integer underflow -> OOB on `uint8_t[1785]`) | built with `-fsanitize=bounds` so the compiler's trap executes a precise `udf` |
 | LiamBindle/MQTT-C | https://github.com/LiamBindle/MQTT-C | release `v1.1.6` (last affected, per CVE record; no upstream fix) | CVE-2026-54412 (OOB read on unbounded `topic_name_size`) | shipped with a freestanding `mqtt_pal.h` (no POSIX sockets); vulnerable function is untouched |
 | zserge/jsmn | https://github.com/zserge/jsmn | current release | — (control) | none |
-| kosma/minmea | https://github.com/kosma/minmea | current release | — (control) | none |
+| kosma/minmea | https://github.com/kosma/minmea | current release | not a control any more, see the correction in the README | none |
 | jibsen/tinf | https://github.com/jibsen/tinf | current release | — (control) | none |
 
 The vulnerable function in every CVE entry is upstream code; the deviation above does not

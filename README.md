@@ -12,8 +12,12 @@ Clone it, flash it, read the fault registers yourself.
 | [CVE-2026-37534](https://nvd.nist.gov/vuln/detail/CVE-2026-37534) | DanielMartensson/Open-SAE-J1939 | integer underflow, out-of-bounds subscript on `uint8_t[1785]` | yes, one TP.DT frame with sequence byte `00` | **UsageFault.** CFSR UNDEFINSTR, PC at the trap |
 | [CVE-2026-54412](https://nvd.nist.gov/vuln/detail/CVE-2026-54412) | LiamBindle/MQTT-C | out-of-bounds read, unbounded `topic_name_size` | yes, 52,036 runs, minimised to 5 bytes (`2131040004`) | **MemManage fault.** CFSR DACCVIOL, MMFAR = guard base |
 
-Controls, same pipeline, must come back clean: kosma/minmea, zserge/jsmn, jibsen/tinf.
-All three: **no findings.**
+Controls, same pipeline, must come back clean: zserge/jsmn, jibsen/tinf.
+Both: **no findings.**
+
+Correction, 2026-11-10: kosma/minmea used to be listed here as a third clean control. That run proved
+nothing: its harness did not copy `.data`, so no typed parser ever ran. With a full harness the pipeline
+reproduces [CVE-2026-29974](https://nvd.nist.gov/vuln/detail/CVE-2026-29974), so minmea is no longer a control.
 
 ## Reproduce the hardware result (10 minutes)
 
@@ -57,8 +61,8 @@ MemManage fault instead of silent corruption.
 ## What is and is not in this repo
 
 - **In:** the three vulnerable libraries at their CVE versions, pristine (the one
-  deviation per library is documented in each harness header); the three control
-  libraries; the harness firmware (`harness/app_isotp_hw.c`, `app_j1939_hw.c`,
+  deviation per library is documented in each harness header); the two control
+  libraries, plus kosma/minmea (no longer a control, see above); the harness firmware (`harness/app_isotp_hw.c`, `app_j1939_hw.c`,
   `app_mqtt_hw.c`); the minimised triggers; the replay scripts; the F446 MPU
   ground-truth file (`board/nucleo_f446re_mpu.json`).
 - **Not in:** the fuzzer, the peripheral capture, the chip models. How the trigger was
